@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>eLibrary</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+          crossorigin="anonymous">
+    <style>
+        .red-background {
+            background-color: #ffcccc !important;
+        }
+        .green-background {
+            background-color: darkseagreen !important;
+        }
+        .intense-red-background {
+            background-color: #d65a5a !important;
+        }
+    </style>
+    <script>
+        window.onload = function () {
+            var rows = document.querySelectorAll('tbody tr');
+            rows.forEach(function (row) {
+                var expectedReturnDateString = row.cells[1].innerText.trim();
+                var actualReturnDateString = row.cells[2].innerText.trim();
+                var status = row.cells[4].innerText.trim();
+                var dateParts = expectedReturnDateString.split("-");
+                var expectedReturnDate = new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]);
+                var currentDate = new Date();
+                const diffTime = expectedReturnDate - currentDate;
+                let daysUntilExpiration = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                console.log(daysUntilExpiration);
+                if (actualReturnDateString.length == 0) {
+                    if (daysUntilExpiration <= 7) {
+                        row.classList.add('red-background');
+                    } else {
+                        row.classList.remove('red-background');
+                    }
+                    if(!(status === "DECLINED"))
+                        row.addEventListener('mouseenter', function () {
+                            if(daysUntilExpiration < 0)
+                                if(daysUntilExpiration == -1)
+                                    row.setAttribute('title', 'Expired one day ago')
+                                else
+                                    row.setAttribute('title', 'Expired ' + Math.abs(daysUntilExpiration) + ' days ago')
+                            else
+                                row.setAttribute('title', 'Days until expiration: ' + daysUntilExpiration);
+                        })
+                    else{
+                        row.classList.remove('red-background');
+                        row.classList.add('intense-red-background');
+                    }
+                } else {
+                    row.classList.add('green-background');
+                };
+            });
+        };
+    </script>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/}">eLibrary</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" th:href="@{/loans-user}">Loans</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" th:href="@{/add-loan}">Request a loan</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" th:href="@{/search-book}">Search books</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" th:href="@{/logout}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container" th:if="${userStatus == 'declined'}">
+    <br>
+    <div class="alert alert-danger">
+        Your account has not been verified. Please try again or contact the administrator.
+    </div>
+</div>
+<div class="container" th:if="${userStatus == 'accepted'}">
+    <br>
+    <div class="row col-md-10">
+        <h2>Loan history</h2>
+    </div>
+    <br>
+    <div th:if="${flag == 'noLoans'}">
+        <div class="alert alert-danger">
+            There are no loans in the database for the current user.
+        </div>
+    </div>
+    <table class="table table-bordered table-hover" th:if="${flag == 'hasLoans'}">
+        <thead class="table-dark">
+        <tr>
+            <th>Loan Date</th>
+            <th>Expected return date</th>
+            <th>Actual return date</th>
+            <th>Book title</th>
+            <th>Status</th>
+            <th>Observations</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each = "loan : ${loans}">
+            <td>
+                <span th:text="${#dates.format(loan.loanDate, 'dd-MM-yyyy')}"></span>
+            </td>
+            <td>
+                <span th:text="${#dates.format(loan.expectedReturnDate, 'dd-MM-yyyy')}"></span>
+            </td>
+            <td>
+                <span th:text="${#dates.format(loan.actualReturnDate, 'dd-MM-yyyy')}"></span>
+            </td>
+            <td th:text = "${loan.bookTitle}"></td>
+            <td th:text = "${loan.status}"></td>
+            <td th:text = "${loan.observations}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <div th:if="${param.error}">
+        <div class="alert alert-danger">
+            The number of days must be a positive value.
+        </div>
+    </div>
+    <br>
+    <div class="container" th:if="${flag == 'hasLoans'}">
+        <div class="row col-md-10">
+            <form method="get" role="form" th:action="@{/loans-user-exp-date}">
+                <div class="form-group mb-3">
+                    <label class="form-label"><h3>Loans that expire within the following number of days</h3></label>
+                    <input type="number" class="form-control" id="numberOfDays" name="numberOfDays" placeholder="Enter number of days">
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary" type="submit">View</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

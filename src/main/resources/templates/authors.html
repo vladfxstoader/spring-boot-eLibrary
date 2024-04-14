@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>eLibrary</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+          crossorigin="anonymous">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/}">eLibrary</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" th:href="@{/loans}">Loans</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" th:href="@{/books}">Books</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" th:href="@{/authors}">Authors</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" th:href="@{/categories}">Categories</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" th:href="@{/publishers}">Publishers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" th:href="@{/logout}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container" th:if="${userStatus == 'declined'}">
+    <br>
+    <div class="alert alert-danger">
+        Your account has not been verified. Please try again or contact the administrator.
+    </div>
+</div>
+<div class="container" th:if="${userStatus == 'accepted'}">
+    <br>
+    <div class="row col-md-10">
+        <h2>Authors found in database</h2>
+    </div>
+    <br>
+    <div class="form-group mb-3">
+        <span>
+            <a th:href="@{/add-author}" class="btn btn-success">Add a new author</a>
+        </span>
+    </div>
+    <div th:if="${param.error}">
+        <div class="alert alert-danger">
+            You cannot delete an author to which are associated books!
+        </div>
+    </div>
+
+    <div th:if="${param.noData}">
+        <div class="alert alert-danger">
+            There are no authors in the database.
+        </div>
+    </div>
+
+    <table class="table table-bordered table-hover" th:unless="${param.noData}">
+        <thead class="table-dark">
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each = "author : ${authors}">
+            <td th:text = "${author.firstName}"></td>
+            <td th:text = "${author.lastName}"></td>
+            <td>
+                <form th:action="@{'/edit-author/' + ${author.id}}" method="get" style="display: inline;">
+                    <button type="submit" class="btn btn-success">Edit</button>
+                </form>
+                <form th:action="@{'/delete-author/' + ${author.id}}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+</body>
+</html>
