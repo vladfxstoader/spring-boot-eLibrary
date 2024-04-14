@@ -63,7 +63,6 @@ public class SpringSecurity {
                 )
                 .exceptionHandling(ex -> ex
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
-                            // Redirect or handle access denied scenario here
                             response.sendRedirect("/access_denied");
                         })
                 )                .build();
