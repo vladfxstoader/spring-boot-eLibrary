@@ -7,6 +7,8 @@ import com.example.eLibrary.service.BookService;
 import com.example.eLibrary.service.LoanService;
 import com.example.eLibrary.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -172,7 +174,9 @@ public class LoanController {
     }
 
     @GetMapping("/loans")
-    public String loans(Model model){
+    public String loans(Model model,
+                        @RequestParam(defaultValue = "0") Integer page,
+                        @RequestParam(defaultValue = "10") Integer size){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String name = auth.getName();
         User user = userService.findByUsername(name);
@@ -182,12 +186,20 @@ public class LoanController {
         else {
             model.addAttribute("userStatus", "accepted");
         }
-        List<LoanDto> loans = loanService.findAllLoans();
+
+        Page<LoanDto> loanPage = loanService.findAllLoans(PageRequest.of(page, size));
+
+        List<LoanDto> loans = loanPage.getContent();
+
         if(loans.size() == 0) {
             return "loans?noData";
         }
+
         model.addAttribute("loans", loans);
-        return "loans.html";
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pageSize", size);
+        model.addAttribute("totalPages", loanPage.getTotalPages());
+        return "loans";
     }
 
     @PostMapping("/accept-loan/{id}")

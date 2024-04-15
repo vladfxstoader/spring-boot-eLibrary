@@ -1,5 +1,6 @@
 package com.example.eLibrary.service;
 
+import com.example.eLibrary.dto.BookDto;
 import com.example.eLibrary.dto.LoanDto;
 import com.example.eLibrary.mapper.LoanMapper;
 import com.example.eLibrary.model.Book;
@@ -7,6 +8,8 @@ import com.example.eLibrary.model.Loan;
 import com.example.eLibrary.repository.BookRepository;
 import com.example.eLibrary.repository.LoanRepository;
 import com.example.eLibrary.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -37,6 +40,11 @@ public class LoanService {
 
     public List<LoanDto> findAllLoans() {
         return loanMapper.mapListToLoanDto(loanRepository.findAll());
+    }
+
+    public Page<LoanDto> findAllLoans(Pageable pageable) {
+        Page<Loan> loanPage = loanRepository.findAll(pageable);
+        return loanPage.map(loanMapper::map);
     }
 
     public void changeLoanStatus(Integer id, String status) {

@@ -4,6 +4,8 @@ import com.example.eLibrary.dto.BookDto;
 import com.example.eLibrary.mapper.BookMapper;
 import com.example.eLibrary.model.Book;
 import com.example.eLibrary.repository.BookRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -51,6 +53,11 @@ public class BookService {
 
     public List<BookDto> findAllBooks() {
         return bookMapper.mapListToBookDto(bookRepository.findAll());
+    }
+
+    public Page<BookDto> findAllBooks(Pageable pageable) {
+        Page<Book> bookPage = bookRepository.findAll(pageable);
+        return bookPage.map(bookMapper::map);
     }
 
     public List<BookDto> findAllBooksWithPositiveStock() {

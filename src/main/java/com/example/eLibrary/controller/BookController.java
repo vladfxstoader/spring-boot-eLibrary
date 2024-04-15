@@ -8,6 +8,8 @@ import com.example.eLibrary.mapper.PublisherMapper;
 import com.example.eLibrary.model.*;
 import com.example.eLibrary.service.*;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -151,7 +153,9 @@ public class BookController {
     }
 
     @GetMapping("/books")
-    public String books(Model model){
+    public String books(Model model,
+                        @RequestParam(defaultValue = "0") Integer page,
+                        @RequestParam(defaultValue = "5") Integer size){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String name = auth.getName();
         User user = userService.findByUsername(name);
@@ -161,11 +165,20 @@ public class BookController {
         else {
             model.addAttribute("userStatus", "accepted");
         }
-        List<BookDto> books = bookService.findAllBooks();
-        if(books.size() == 0) {
+
+        Page<BookDto> bookPage = bookService.findAllBooks(PageRequest.of(page, size));
+
+        List<BookDto> books = bookPage.getContent();
+
+        if(books.isEmpty()) {
             return "books?noData";
         }
+
         model.addAttribute("books", books);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pageSize", size);
+        model.addAttribute("totalPages", bookPage.getTotalPages());
+
         return "books.html";
     }
 
