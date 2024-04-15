@@ -86,6 +86,10 @@ public class BookController {
         Integer stock = bookDto.getStock();
         String title = bookDto.getTitle().trim();
 
+        if(bookService.checkExistsBook(bookDto)) {
+            result.rejectValue("title", null, "There already exists a book with the same information");
+        }
+
         if(title == null || title.isEmpty()) {
             result.rejectValue("title", null, "Title cannot be empty");
         }
@@ -449,8 +453,32 @@ public class BookController {
 
     @PostMapping("/edit-book/{id}/save")
     public String saveEditedBook(@PathVariable("id") Integer id,
-                                     @ModelAttribute("book") BookDto bookDto) {
+                                 @ModelAttribute("book") BookDto bookDto,
+                                 BindingResult result,
+                                 Model model) {
 
+        if(bookService.checkExistsBook(bookDto)) {
+            result.rejectValue("title", null, "There already exists a book with the same information");
+        }
+        if(result.hasErrors()){
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String name = auth.getName();
+            User user = userService.findByUsername(name);
+            if(!user.getStatus().equals("ACCEPTED")) {
+                model.addAttribute("userStatus", "declined");
+            }
+            else {
+                model.addAttribute("userStatus", "accepted");
+            }
+            model.addAttribute("book", bookDto);
+            List<PublisherDto> publishers1 = publisherService.findAllPublishers();
+            List<CategoryDto> categories1 = categoryService.findAllCategories();
+            List<AuthorDto> authors1 = authorService.findAllAuthors();
+            model.addAttribute("publishers", publishers1);
+            model.addAttribute("authors", authors1);
+            model.addAttribute("categories", categories1);
+            return "edit-book";
+        }
         bookDto.setId(id);
         bookService.save(bookDto);
         return "redirect:/books";

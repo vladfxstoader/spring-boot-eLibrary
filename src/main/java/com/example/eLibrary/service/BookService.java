@@ -25,6 +25,30 @@ public class BookService {
         return savedBook;
     }
 
+    public Boolean checkExistsBook(BookDto bookDto) {
+        List<BookDto> allBooks = findAllBooks();
+        Integer number = 0;
+        for(BookDto book: allBooks) {
+            number = 0;
+            if(bookDto.getTitle().equals(book.getTitle())) {
+                number += 1;
+            }
+            if(bookDto.getYear().equals(book.getYear())) {
+                number += 1;
+            }
+            if(bookDto.getAuthors().equals(book.getAuthors())) {
+                number += 1;
+            }
+            if(bookDto.getPublisher().equals(book.getPublisher())) {
+                number += 1;
+            }
+            if(number == 4) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public List<BookDto> findAllBooks() {
         return bookMapper.mapListToBookDto(bookRepository.findAll());
     }
