@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -83,13 +84,26 @@ public class BookController {
 
         Integer year = bookDto.getYear();
         Integer stock = bookDto.getStock();
+        String title = bookDto.getTitle().trim();
+
+        if(title == null || title.isEmpty()) {
+            result.rejectValue("title", null, "Title cannot be empty");
+        }
 
         if(year == null) {
             result.rejectValue("year", null, "Year cannot be null");
         }
 
+        if(year < 1500 || year > new Date().getYear()) {
+            result.rejectValue("year", null, "Incorrect value for year");
+        }
+
         if(stock == null) {
             result.rejectValue("stock", null, "Stock cannot be null");
+        }
+
+        if(stock < 0) {
+            result.rejectValue("stock", null, "Stock cannot be negative");
         }
 
         if (publisher == null) {
@@ -109,6 +123,15 @@ public class BookController {
         bookDto.setAuthors(authorMapper.mapListToAuthorDto(authors));
 
         if(result.hasErrors()){
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String name = auth.getName();
+            User user = userService.findByUsername(name);
+            if(!user.getStatus().equals("ACCEPTED")) {
+                model.addAttribute("userStatus", "declined");
+            }
+            else {
+                model.addAttribute("userStatus", "accepted");
+            }
             model.addAttribute("book", bookDto);
             List<PublisherDto> publishers1 = publisherService.findAllPublishers();
             List<CategoryDto> categories1 = categoryService.findAllCategories();
@@ -116,7 +139,7 @@ public class BookController {
             model.addAttribute("publishers", publishers1);
             model.addAttribute("authors", authors1);
             model.addAttribute("categories", categories1);
-            return "/add-book";
+            return "add-book";
         }
 
         bookService.save(bookDto);
@@ -426,9 +449,7 @@ public class BookController {
 
     @PostMapping("/edit-book/{id}/save")
     public String saveEditedBook(@PathVariable("id") Integer id,
-                                     @ModelAttribute("book") BookDto bookDto,
-                                     BindingResult result,
-                                     Model model) {
+                                     @ModelAttribute("book") BookDto bookDto) {
 
         bookDto.setId(id);
         bookService.save(bookDto);

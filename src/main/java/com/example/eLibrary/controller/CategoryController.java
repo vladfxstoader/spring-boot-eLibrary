@@ -52,21 +52,35 @@ public class CategoryController {
     public String registration(@Valid @ModelAttribute("category") CategoryDto categoryDto,
                                BindingResult result,
                                Model model) {
-        String name = categoryDto.getName();
-        if (name == null) {
+        String name = categoryDto.getName().trim();
+        if (name == null || name.isEmpty()) {
             result.rejectValue("name", null, "Category name cannot be empty");
         }
-        Category existingCategory = categoryService.findByName(categoryDto.getName());
+        Category existingCategory = categoryService.findByName(categoryDto.getName().trim());
 
         if(existingCategory!=null) {
             result.rejectValue("name", null, "There is already a category registered with the same name");
         }
 
-        if(result.hasErrors()) {
-            model.addAttribute("category", categoryDto);
-            return "/add-category";
+        if (!name.matches("[a-zA-Z]+")) {
+            result.rejectValue("name", null, "Category name can contain only letters");
         }
 
+        if(result.hasErrors()) {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String username = auth.getName();
+            User user = userService.findByUsername(username);
+            if(!user.getStatus().equals("ACCEPTED")) {
+                model.addAttribute("userStatus", "declined");
+            }
+            else {
+                model.addAttribute("userStatus", "accepted");
+            }
+            model.addAttribute("category", categoryDto);
+            return "add-category";
+        }
+
+        categoryDto.setName(categoryDto.getName().trim());
         categoryService.save(categoryDto);
         return "redirect:/add-category?success";
 
@@ -128,7 +142,27 @@ public class CategoryController {
             return "redirect:/edit-category/" + id + "?error";
         }
 
+        if (!categoryDto.getName().matches("[a-zA-Z]+")) {
+            result.rejectValue("name", null, "Category name cannot contain digits");
+        }
+
+        if(result.hasErrors()) {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String username = auth.getName();
+            User user = userService.findByUsername(username);
+            if(!user.getStatus().equals("ACCEPTED")) {
+                model.addAttribute("userStatus", "declined");
+            }
+            else {
+                model.addAttribute("userStatus", "accepted");
+            }
+            model.addAttribute("category", categoryDto);
+            return "redirect:/edit-category/" + id;
+        }
+
         categoryDto.setId(id);
+        categoryDto.setName(categoryDto.getName().trim());
+
         categoryService.save(categoryDto);
         return "redirect:/categories";
     }

@@ -53,15 +53,15 @@ public class AuthorController {
     public String registration(@Valid @ModelAttribute("author") AuthorDto authorDto,
                                BindingResult result,
                                Model model){
-        String firstName = authorDto.getFirstName();
-        String lastName = authorDto.getLastName();
-        if (firstName == null) {
+        String firstName = authorDto.getFirstName().trim();
+        String lastName = authorDto.getLastName().trim();
+        if (firstName == null || firstName.isEmpty()) {
             result.rejectValue("firstName", null, "First name cannot be empty");
         }
-        if (lastName == null) {
+        if (lastName == null || firstName.isEmpty()) {
             result.rejectValue("lastName", null, "Last name cannot be empty");
         }
-        Author existingAuthor = authorService.findByFirstNameAndLastName(authorDto.getFirstName(), authorDto.getLastName());
+        Author existingAuthor = authorService.findByFirstNameAndLastName(authorDto.getFirstName().trim(), authorDto.getLastName().trim());
 
         if(existingAuthor != null){
             result.rejectValue("lastName", null,
@@ -69,8 +69,17 @@ public class AuthorController {
         }
 
         if(result.hasErrors()){
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String name = auth.getName();
+            User user = userService.findByUsername(name);
+            if(!user.getStatus().equals("ACCEPTED")) {
+                model.addAttribute("userStatus", "declined");
+            }
+            else {
+                model.addAttribute("userStatus", "accepted");
+            }
             model.addAttribute("author", authorDto);
-            return "/add-author";
+            return "add-author";
         }
 
         authorService.save(authorDto);
@@ -128,7 +137,7 @@ public class AuthorController {
                                      @ModelAttribute("author") AuthorDto authorDto,
                                      BindingResult result,
                                      Model model) {
-        Author existingAuthor = authorService.findByFirstNameAndLastName(authorDto.getFirstName(), authorDto.getLastName());
+        Author existingAuthor = authorService.findByFirstNameAndLastName(authorDto.getFirstName().trim(), authorDto.getLastName().trim());
         if (existingAuthor != null && !existingAuthor.getId().equals(id)) {
             return "redirect:/edit-author/" + id + "?error";
         }

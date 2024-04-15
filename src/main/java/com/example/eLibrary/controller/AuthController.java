@@ -58,7 +58,7 @@ public class AuthController {
     public String registration(@Valid @ModelAttribute("user") UserDto userDto,
                                BindingResult result,
                                Model model){
-        User existingUser = userService.findByUsername(userDto.getUsername());
+        User existingUser = userService.findByUsername(userDto.getUsername().trim());
 
         if(existingUser != null && existingUser.getUsername() != null && !existingUser.getUsername().isEmpty()){
             result.rejectValue("username", null,
@@ -67,7 +67,7 @@ public class AuthController {
 
         if(result.hasErrors()){
             model.addAttribute("user", userDto);
-            return "/register";
+            return "register";
         }
 
         userService.save(userDto);
@@ -94,7 +94,7 @@ public class AuthController {
 
         if(result.hasErrors()){
             model.addAttribute("user", userDto);
-            return "/forgot-password";
+            return "forgot-password";
         }
 
         userService.resetPassword(userDto.getUsername(), userDto.getPassword());

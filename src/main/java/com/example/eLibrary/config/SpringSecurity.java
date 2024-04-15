@@ -46,7 +46,7 @@ public class SpringSecurity {
                                 .successHandler((request, response, authentication) -> {
                                     for (GrantedAuthority auth : authentication.getAuthorities()) {
                                         if (auth.getAuthority().equals("ROLE_ADMIN")) {
-                                            response.sendRedirect("/users"); // admin dashboard
+                                            response.sendRedirect("/users"); //admin dashboard
                                             return;
                                         } else if (auth.getAuthority().equals("ROLE_LIBRARIAN")) {
                                             response.sendRedirect("/loans"); //librarian dashboard

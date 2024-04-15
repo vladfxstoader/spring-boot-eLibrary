@@ -52,21 +52,30 @@ public class PublisherController {
     public String registration(@Valid @ModelAttribute("publisher") PublisherDto publisherDto,
                                BindingResult result,
                                Model model) {
-        String name = publisherDto.getName();
-        if (name == null) {
+        String name = publisherDto.getName().trim();
+        if (name == null || name.isEmpty()) {
             result.rejectValue("name", null, "Publisher name cannot be empty");
         }
-        Publisher existingPublisher = publisherService.findByName(publisherDto.getName());
+        Publisher existingPublisher = publisherService.findByName(publisherDto.getName().trim());
 
         if(existingPublisher!=null) {
             result.rejectValue("name", null, "There is already a publisher registered with the same name");
         }
 
         if(result.hasErrors()) {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String username = auth.getName();
+            User user = userService.findByUsername(username);
+            if(!user.getStatus().equals("ACCEPTED")) {
+                model.addAttribute("userStatus", "declined");
+            }
+            else {
+                model.addAttribute("userStatus", "accepted");
+            }
             model.addAttribute("publisher", publisherDto);
-            return "/add-publisher";
+            return "add-publisher";
         }
-
+        publisherDto.setName(publisherDto.getName().trim());
         publisherService.save(publisherDto);
         return "redirect:/add-publisher?success";
 
@@ -119,16 +128,15 @@ public class PublisherController {
     }
 
     @PostMapping("/edit-publisher/{id}/save")
-    public String saveEditedCategory(@PathVariable("id") Integer id,
-                                     @ModelAttribute("publisher") PublisherDto publisherDto,
-                                     BindingResult result,
-                                     Model model) {
+    public String saveEditedPublisher(@PathVariable("id") Integer id,
+                                     @ModelAttribute("publisher") PublisherDto publisherDto) {
         Publisher existingPublisher = publisherService.findByName(publisherDto.getName());
         if (existingPublisher != null && !existingPublisher.getId().equals(id)) {
             return "redirect:/edit-publisher/" + id + "?error";
         }
 
         publisherDto.setId(id);
+        publisherDto.setName(publisherDto.getName().trim());
         publisherService.save(publisherDto);
         return "redirect:/publishers";
     }
