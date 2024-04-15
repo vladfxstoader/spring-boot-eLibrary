@@ -230,6 +230,7 @@ public class BookController {
                         booksBorrowedByOtherUsers.add(bookMapper.map(book));
                 }
             }
+
         Boolean useCategory = false;
         Boolean usePublisher = false;
         Boolean useAuthor = false;
@@ -242,6 +243,8 @@ public class BookController {
             useAuthor = true;
         if(year != null)
             useYear = true;
+
+        String[] authorNames = author.split(" ");
 
         Set<BookDto> allBooksToReturn = new HashSet<>();
         for(BookDto bookDto : allBooks) {
@@ -267,13 +270,20 @@ public class BookController {
                 }
             }
             if(!author.equals("")) {
-                String[] authorNames = author.split(" ");
                 List<AuthorDto> authorDtos = bookDto.getAuthors();
                 Integer numberOfCorrespondingAuthors = 0;
                 for(AuthorDto authorDto : authorDtos) {
-                    if(authorDto.getFirstName().equalsIgnoreCase(authorNames[0]) &&
-                            authorDto.getLastName().equalsIgnoreCase(authorNames[1])) {
-                        numberOfCorrespondingAuthors += 1;
+                    if(authorNames.length == 2) {
+                        if (authorDto.getFirstName().equalsIgnoreCase(authorNames[0]) &&
+                                authorDto.getLastName().equalsIgnoreCase(authorNames[1])) {
+                            numberOfCorrespondingAuthors += 1;
+                        }
+                    }
+                    else if(authorNames.length == 1) {
+                        if (authorDto.getFirstName().equalsIgnoreCase(authorNames[0]) ||
+                                authorDto.getLastName().equalsIgnoreCase(authorNames[0])) {
+                            numberOfCorrespondingAuthors += 1;
+                        }
                     }
                 }
                 if(numberOfCorrespondingAuthors > 0) {
@@ -316,13 +326,20 @@ public class BookController {
                 }
             }
             if(!author.equals("")) {
-                String[] authorNames = author.split(" ");
                 List<AuthorDto> authorDtos = bookDto.getAuthors();
                 Integer numberOfCorrespondingAuthors = 0;
                 for(AuthorDto authorDto : authorDtos) {
-                    if(authorDto.getFirstName().equalsIgnoreCase(authorNames[0]) &&
-                            authorDto.getLastName().equalsIgnoreCase(authorNames[1])) {
-                        numberOfCorrespondingAuthors += 1;
+                    if(authorNames.length == 2) {
+                        if (authorDto.getFirstName().equalsIgnoreCase(authorNames[0]) &&
+                                authorDto.getLastName().equalsIgnoreCase(authorNames[1])) {
+                            numberOfCorrespondingAuthors += 1;
+                        }
+                    }
+                    else if(authorNames.length == 1) {
+                        if (authorDto.getFirstName().equalsIgnoreCase(authorNames[0]) ||
+                                authorDto.getLastName().equalsIgnoreCase(authorNames[0])) {
+                            numberOfCorrespondingAuthors += 1;
+                        }
                     }
                 }
                 if(numberOfCorrespondingAuthors > 0) {
@@ -366,13 +383,20 @@ public class BookController {
                 }
             }
             if(!author.equals("")) {
-                String[] authorNames = author.split(" ");
                 List<AuthorDto> authorDtos = bookDto.getAuthors();
                 Integer numberOfCorrespondingAuthors = 0;
                 for(AuthorDto authorDto : authorDtos) {
-                    if(authorDto.getFirstName().equalsIgnoreCase(authorNames[0]) &&
-                            authorDto.getLastName().equalsIgnoreCase(authorNames[1])) {
-                        numberOfCorrespondingAuthors += 1;
+                    if(authorNames.length == 2) {
+                        if (authorDto.getFirstName().equalsIgnoreCase(authorNames[0]) &&
+                                authorDto.getLastName().equalsIgnoreCase(authorNames[1])) {
+                            numberOfCorrespondingAuthors += 1;
+                        }
+                    }
+                    else if(authorNames.length == 1) {
+                        if (authorDto.getFirstName().equalsIgnoreCase(authorNames[0]) ||
+                                authorDto.getLastName().equalsIgnoreCase(authorNames[0])) {
+                            numberOfCorrespondingAuthors += 1;
+                        }
                     }
                 }
                 if(numberOfCorrespondingAuthors > 0) {
