@@ -10,6 +10,12 @@
           rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
           crossorigin="anonymous">
+    <style>
+        .custom-width {
+            width: auto;
+            max-width: 100px;
+        }
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -44,21 +50,21 @@
     <table class="table table-bordered table-hover">
         <thead class="table-dark">
         <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
             <th>Username</th>
+            <th>First name</th>
+            <th>Last name</th>
+            <th>Account status</th>
             <th>Role</th>
-            <th>Status</th>
             <th>Action</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each = "user : ${users}">
+            <td th:text = "${user.username}"></td>
             <td th:text = "${user.firstName}"></td>
             <td th:text = "${user.lastName}"></td>
-            <td th:text = "${user.username}"></td>
-            <td th:text = "${user.role}"></td>
             <td th:text = "${user.status}"></td>
+            <td th:text = "${user.role}"></td>
             <td th:if="${user.status == 'PENDING'}">
                 <form th:action="@{'/accept-user/' + ${user.id}}" method="post" style="display: inline;">
                     <button type="submit" class="btn btn-success">Accept</button>
@@ -69,10 +75,10 @@
             </td>
             <td th:if="${user.status == 'ACCEPTED'}">
                 <form th:action="@{/change-user-role/{id}(id=${user.id})}" method="post">
-                    <select class="form-select" name="newRole">
+                    <select class="form-select custom-width" name="newRole" style="display: inline;">
                         <option th:each="role : ${roles}" th:text="${role.name.substring(5)}">Role Name</option>
                     </select>
-                    <button class="btn btn-primary" type="submit">Change Role</button>
+                    <button class="btn btn-primary" type="submit" style="display: inline;">Change role</button>
                 </form>
             </td>
             <td th:unless="${user.status == 'PENDING' or user.status == 'ACCEPTED'}">

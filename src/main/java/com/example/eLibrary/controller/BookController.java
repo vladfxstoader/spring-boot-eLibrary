@@ -10,6 +10,7 @@ import com.example.eLibrary.service.*;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -17,10 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -155,22 +153,34 @@ public class BookController {
     @GetMapping("/books")
     public String books(Model model,
                         @RequestParam(defaultValue = "0") Integer page,
-                        @RequestParam(defaultValue = "5") Integer size){
+                        @RequestParam(defaultValue = "5") Integer size,
+                        @RequestParam(defaultValue = "title") String sortBy,
+                        @RequestParam(defaultValue = "asc") String sortDirection) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String name = auth.getName();
         User user = userService.findByUsername(name);
-        if(!user.getStatus().equals("ACCEPTED")) {
+        if (!user.getStatus().equals("ACCEPTED")) {
             model.addAttribute("userStatus", "declined");
-        }
-        else {
+        } else {
             model.addAttribute("userStatus", "accepted");
         }
 
-        Page<BookDto> bookPage = bookService.findAllBooks(PageRequest.of(page, size));
+        Sort sort;
+        if ("desc".equalsIgnoreCase(sortDirection)) {
+            sort = Sort.by(sortBy).descending();
+        } else {
+            sort = Sort.by(sortBy);
+        }
+
+        if (!Arrays.asList("title", "stock", "year").contains(sortBy)) {
+            sort = Sort.by("title");
+        }
+
+        Page<BookDto> bookPage = bookService.findAllBooks(PageRequest.of(page, size, sort));
 
         List<BookDto> books = bookPage.getContent();
 
-        if(books.isEmpty()) {
+        if (books.isEmpty()) {
             return "books?noData";
         }
 
@@ -181,6 +191,8 @@ public class BookController {
 
         return "books.html";
     }
+
+
 
     @PostMapping("/delete-book/{id}")
     public String deleteBook(@PathVariable("id") Integer id) {

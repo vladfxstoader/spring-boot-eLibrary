@@ -15,6 +15,10 @@
             font-weight: bold;
             color: #007bff;
         }
+        .custom-width {
+            width: auto;
+            max-width: 300px;
+        }
     </style>
 </head>
 <body>
@@ -75,6 +79,26 @@
             There are no books in the database.
         </div>
     </div>
+
+    <div class="form-group" th:unless="${param.noData}">
+        <label for="sortBySelect">Sort by</label><br>
+        <select class="form-select custom-width" id="sortBySelect" name="sortBy" style="display: inline">
+            <option value="title" th:selected="${param.sortBy == 'title' && param.sortDirection == null}">Title</option>
+            <option value="stock" th:selected="${param.sortBy == 'stock' && param.sortDirection == 'asc'}">Stock (ascending)</option>
+            <option value="stockDesc" th:selected="${param.sortBy == 'stock' && param.sortDirection == 'desc'}">Stock (descending)</option>
+            <option value="year" th:selected="${param.sortBy == 'year' && param.sortDirection == 'asc'}">Publishing year (ascending)</option>
+            <option value="yearDesc" th:selected="${param.sortBy == 'year' && param.sortDirection == 'desc'}">Publishing year (descending)</option>
+        </select>
+
+        <form id="sortForm" th:action="@{/books}" method="get" style="display: inline">
+            <input type="hidden" id="sortByInput" name="sortBy">
+            <input type="hidden" id="sortDirectionInput" name="sortDirection">
+            <button type="submit" class="btn btn-primary">Sort</button>
+        </form>
+    </div>
+
+    <br>
+
     <table class="table table-bordered table-hover" th:unless="${param.noData}">
         <thead class="table-dark">
         <tr>
@@ -118,32 +142,44 @@
         </tbody>
     </table>
 
-    <nav aria-label="Page navigation">
+    <nav aria-label="Page navigation" th:unless="${param.noData}">
         <ul class="pagination justify-content-center">
-            <!-- Previous Page -->
             <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                <a class="page-link" th:href="@{/books(page=${currentPage - 1},size=${pageSize})}" aria-label="Previous">
+                <a class="page-link" th:href="@{/books(page=${currentPage - 1},size=${pageSize},sortBy=${param.sortBy},sortDirection=${param.sortDirection})}" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
 
-            <!-- Page Numbers -->
             <li class="page-item" th:each="pageNumber : ${#numbers.sequence(0, totalPages - 1)}">
                 <a class="page-link"
-                   th:href="@{/books(page=${pageNumber},size=${pageSize})}"
+                   th:href="@{/books(page=${pageNumber},size=${pageSize},sortBy=${param.sortBy},sortDirection=${param.sortDirection})}"
                    th:text="${pageNumber + 1}"
                    th:classappend="${pageNumber == currentPage} ? 'active-page-link' : ''">
                 </a>
             </li>
 
-            <!-- Next Page -->
             <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-                <a class="page-link" th:href="@{/books(page=${currentPage + 1},size=${pageSize})}" aria-label="Next">
+                <a class="page-link" th:href="@{/books(page=${currentPage + 1},size=${pageSize},sortBy=${param.sortBy},sortDirection=${param.sortDirection})}" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>
         </ul>
     </nav>
+
+    <script>
+        document.getElementById('sortForm').addEventListener('submit', function() {
+            // Get the selected value from the dropdown
+            var selectedValue = document.getElementById('sortBySelect').value;
+            // Set the value of the hidden input fields based on the selected value
+            if (selectedValue.endsWith('Desc')) {
+                document.getElementById('sortByInput').value = selectedValue.substring(0, selectedValue.length - 4);
+                document.getElementById('sortDirectionInput').value = 'desc';
+            } else {
+                document.getElementById('sortByInput').value = selectedValue;
+                document.getElementById('sortDirectionInput').value = 'asc';
+            }
+        });
+    </script>
 
 </div>
 </body>
