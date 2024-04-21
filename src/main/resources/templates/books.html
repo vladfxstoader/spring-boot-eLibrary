@@ -167,6 +167,19 @@
     </nav>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        // Get the current sorting criteria from the URL parameters
+        var sortBy = new URLSearchParams(window.location.search).get('sortBy');
+        var sortDirection = new URLSearchParams(window.location.search).get('sortDirection');
+
+        // Set the selected value in the dropdown based on the sorting criteria
+        if (sortBy && sortDirection) {
+            if (sortDirection === 'desc') {
+                sortBy += 'Desc';
+            }
+            document.getElementById('sortBySelect').value = sortBy;
+        }
+    });
         document.getElementById('sortForm').addEventListener('submit', function() {
             // Get the selected value from the dropdown
             var selectedValue = document.getElementById('sortBySelect').value;
