@@ -5,18 +5,24 @@ import com.example.eLibrary.mapper.CategoryMapper;
 import com.example.eLibrary.model.Category;
 import com.example.eLibrary.repository.CategoryRepository;
 import com.example.eLibrary.service.CategoryService;
-import org.junit.jupiter.api.BeforeEach;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class CategoryServiceUnitTest {
+@Slf4j
+@ExtendWith(MockitoExtension.class)
+class CategoryServiceUnitTest {
 
     @Mock
     private CategoryRepository categoryRepository;
@@ -27,53 +33,59 @@ public class CategoryServiceUnitTest {
     @InjectMocks
     private CategoryService categoryService;
 
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
-
     @Test
-    public void testSaveCategory() {
+    void testSave() {
         // Arrange
         CategoryDto categoryDto = new CategoryDto();
-        categoryDto.setName("Fiction");
-
-        Category savedCategory = new Category();
-        savedCategory.setId(1);
-        savedCategory.setName("Fiction");
-
-        when(categoryMapper.map(categoryDto)).thenReturn(new Category());
-        when(categoryRepository.save(any(Category.class))).thenReturn(savedCategory);
+        Category category = new Category();
+        when(categoryMapper.map(categoryDto)).thenReturn(category);
+        when(categoryRepository.save(category)).thenReturn(category);
 
         // Act
-        Category result = categoryService.save(categoryDto);
+        Category savedCategory = categoryService.save(categoryDto);
 
         // Assert
-        assertEquals(savedCategory, result);
-        verify(categoryMapper).map(categoryDto);
-        verify(categoryRepository).save(any(Category.class));
+        assertNotNull(savedCategory);
+        verify(categoryRepository, times(1)).save(category);
+        log.info("Category saved successfully");
     }
 
     @Test
-    public void testFindCategoryByName() {
+    void testFindAllCategories() {
         // Arrange
-        String categoryName = "Fiction";
-        Category category = new Category();
-        category.setId(1);
-        category.setName("Fiction");
+        List<Category> categories = new ArrayList<>();
+        when(categoryRepository.findAll()).thenReturn(categories);
+        when(categoryMapper.mapListToCategoryDto(categories)).thenReturn(new ArrayList<>());
 
+        // Act
+        List<CategoryDto> foundCategories = categoryService.findAllCategories();
+
+        // Assert
+        assertNotNull(foundCategories);
+        assertEquals(0, foundCategories.size());
+        verify(categoryRepository, times(1)).findAll();
+        log.info("All categories retrieved successfully");
+    }
+
+    @Test
+    void testFindByName() {
+        // Arrange
+        String categoryName = "Test Category";
+        Category category = new Category();
         when(categoryRepository.findByNameIgnoreCase(categoryName)).thenReturn(category);
 
         // Act
-        Category result = categoryService.findByName(categoryName);
+        Category foundCategory = categoryService.findByName(categoryName);
 
         // Assert
-        assertEquals(category, result);
-        verify(categoryRepository).findByNameIgnoreCase(categoryName);
+        assertNotNull(foundCategory);
+        assertEquals(category, foundCategory);
+        verify(categoryRepository, times(1)).findByNameIgnoreCase(categoryName);
+        log.info("Category '{}' found successfully", categoryName);
     }
 
     @Test
-    public void testDeleteCategoryById() {
+    void testDeleteCategoryById() {
         // Arrange
         int categoryId = 1;
 
@@ -81,7 +93,30 @@ public class CategoryServiceUnitTest {
         categoryService.deleteCategoryById(categoryId);
 
         // Assert
-        verify(categoryRepository).deleteById(categoryId);
+        verify(categoryRepository, times(1)).deleteById(categoryId);
+        log.info("Category with ID '{}' deleted successfully", categoryId);
     }
+    @Test
+    void findById() {
+        int categoryId = 2;
+        Category category = new Category();
+        category.setId(categoryId);
+        Optional<Category> optionalCategory = Optional.of(category);
+        when(categoryRepository.findById(categoryId)).thenReturn(optionalCategory);
 
+        CategoryDto categoryDto = new CategoryDto();
+        categoryDto.setId(categoryId);
+
+        when(categoryMapper.map(category)).thenReturn(categoryDto);
+
+        // Act
+        CategoryDto foundCategory = categoryService.findById(categoryId);
+
+        // Assert
+        assertNotNull(foundCategory);
+        assertEquals(categoryId, foundCategory.getId().intValue());
+
+        verify(categoryRepository, times(1)).findById(categoryId);
+        log.info("Category with ID '{}' found successfully", categoryId);
+    }
 }
