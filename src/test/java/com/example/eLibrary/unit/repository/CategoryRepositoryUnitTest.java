@@ -32,4 +32,16 @@ class CategoryRepositoryUnitTest {
         // Assertion
         assertEquals(category, foundCategory);
     }
+
+    @Test
+    void testFindByNameIgnoreCase_CategoryNotFound() {
+        // Mocking the repository behavior for category not found
+        when(categoryRepository.findByNameIgnoreCase("NonExistentCategory")).thenReturn(null);
+
+        // Call the findByNameIgnoreCase method for a category that does not exist
+        Category foundCategory = categoryRepository.findByNameIgnoreCase("NonExistentCategory");
+
+        // Assertion
+        assertEquals(null, foundCategory);
+    }
 }
