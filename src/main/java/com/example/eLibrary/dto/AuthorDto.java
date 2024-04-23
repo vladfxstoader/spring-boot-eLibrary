@@ -14,4 +14,5 @@ public class AuthorDto {
     private String firstName;
     @NotEmpty
     private String lastName;
+    private AuthorDetailsDto authorDetails;
 }

@@ -26,4 +26,8 @@ public class Author {
     private String lastName;
     @ManyToMany(mappedBy = "authors")
     private List<Book> books;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "author_details_id", referencedColumnName = "id")
+    private AuthorDetails authorDetails;
 }

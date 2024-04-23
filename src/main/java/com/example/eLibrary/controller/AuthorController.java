@@ -1,5 +1,6 @@
 package com.example.eLibrary.controller;
 
+import com.example.eLibrary.dto.AuthorDetailsDto;
 import com.example.eLibrary.dto.AuthorDto;
 import com.example.eLibrary.dto.BookDto;
 import com.example.eLibrary.model.Author;
@@ -45,6 +46,7 @@ public class AuthorController {
             model.addAttribute("userStatus", "accepted");
         }
         AuthorDto author = new AuthorDto();
+        author.setAuthorDetails(new AuthorDetailsDto());
         model.addAttribute("author", author);
         return "add-author";
     }

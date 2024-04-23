@@ -9,11 +9,18 @@ import java.util.stream.Collectors;
 
 @Component
 public class AuthorMapper {
+    private AuthorDetailsMapper authorDetailsMapper;
+
+    public AuthorMapper(AuthorDetailsMapper authorDetailsMapper) {
+        this.authorDetailsMapper = authorDetailsMapper;
+    }
+
     public Author map(AuthorDto authorDto) {
         Author author = new Author();
         author.setId(authorDto.getId());
         author.setFirstName(authorDto.getFirstName());
         author.setLastName(authorDto.getLastName());
+        author.setAuthorDetails(authorDetailsMapper.map(authorDto.getAuthorDetails()));
         return author;
     }
 
@@ -22,6 +29,7 @@ public class AuthorMapper {
         authorDto.setId(author.getId());
         authorDto.setFirstName(author.getFirstName());
         authorDto.setLastName(author.getLastName());
+        authorDto.setAuthorDetails(authorDetailsMapper.map(author.getAuthorDetails()));
         return authorDto;
     }
 

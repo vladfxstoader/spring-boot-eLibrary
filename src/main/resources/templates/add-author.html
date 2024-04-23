@@ -76,6 +76,12 @@
                            th:if="${#fields.hasErrors('lastName')}"></p>
                     </div>
 
+                    <div class="form-group mb-3">
+                        <label class="form-label">Biography</label>
+                        <textarea class="form-control" id="bio" name="bio" placeholder="Enter biography" th:field="*{authorDetails.bio}" rows="4" required></textarea>
+                        <p th:errors="*{authorDetails.bio}" class="text-danger" th:if="${#fields.hasErrors('authorDetails.bio')}"></p>
+                    </div>
+
                     <div class="form-group">
                         <button class="btn btn-primary" type="submit">Add</button>
                     </div>
