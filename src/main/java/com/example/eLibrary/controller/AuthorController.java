@@ -131,19 +131,21 @@ public class AuthorController {
         }
         AuthorDto author = authorService.findById(id);
         model.addAttribute("author", author);
+        model.addAttribute("authorDetails", author.getAuthorDetails());
         return "edit-author";
     }
 
     @PostMapping("/edit-author/{id}/save")
     public String saveEditedAuthor(@PathVariable("id") Integer id,
                                      @ModelAttribute("author") AuthorDto authorDto,
+                                     @ModelAttribute("authorDetails") AuthorDetailsDto authorDetailsDto,
                                      BindingResult result,
                                      Model model) {
         Author existingAuthor = authorService.findByFirstNameAndLastName(authorDto.getFirstName().trim(), authorDto.getLastName().trim());
         if (existingAuthor != null && !existingAuthor.getId().equals(id)) {
             return "redirect:/edit-author/" + id + "?error";
         }
-
+        authorDto.setAuthorDetails(authorDetailsDto);
         authorDto.setId(id);
         authorService.save(authorDto);
         return "redirect:/authors";
