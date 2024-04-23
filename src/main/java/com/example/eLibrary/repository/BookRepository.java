@@ -22,6 +22,4 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
     List<Book> findAllByYear(Integer year);
 
     List<Book> findAllByStockGreaterThan(Integer stock);
-
-
 }
