@@ -80,9 +80,17 @@ public class UserService {
         }
         User user = optionalUser.get();
         Role role = roleRepository.findByNameIgnoreCase("ROLE_" + newRole);
+
+        if (user.getRoles() == null) {
+            user.setRoles(new ArrayList<>());
+        }
+
         List<Role> pastRoles = user.getPastRoles();
-        Role currentRole = user.getRoles().get(0);
-        pastRoles.add(currentRole);
+        Role currentRole = null;
+        if (!user.getRoles().isEmpty()) {
+            currentRole = user.getRoles().get(0);
+            pastRoles.add(currentRole);
+        }
         user.setRoles(new ArrayList<>(Arrays.asList(role)));
         user.setPastRoles(pastRoles);
         userRepository.save(user);
