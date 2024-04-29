@@ -131,23 +131,4 @@ public class AuthorControllerUnitTest {
         log.info("Show edit author form test passed successfully");
     }
 
-//    @Test
-//    public void testSaveEditedAuthorWithValidAuthor() {
-//        // Arrange
-//        int authorId = 1;
-//        AuthorDto authorDto = new AuthorDto();
-//        authorDto.setId(authorId);
-//        authorDto.setFirstName("John");
-//        authorDto.setLastName("Doe");
-//        when(bindingResult.hasErrors()).thenReturn(false);
-//
-//        // Act
-//        String viewName = authorController.saveEditedAuthor(authorId, authorDto, bindingResult, model);
-//
-//        // Assert
-//        assertEquals("redirect:/authors", viewName);
-//        verify(authorService).save(authorDto);
-//        log.info("Save edited author with valid author test passed successfully");
-//    }
-
 }
