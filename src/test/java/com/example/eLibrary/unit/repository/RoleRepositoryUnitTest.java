@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
 @Slf4j
@@ -45,7 +46,7 @@ class RoleRepositoryUnitTest {
         Role foundRole = roleRepository.findByNameIgnoreCase("unknown_role");
 
         // Assertion
-        assertEquals(null, foundRole);
+        assertNull(foundRole);
         log.info("Role not found for name: unknown_role");
     }
 }

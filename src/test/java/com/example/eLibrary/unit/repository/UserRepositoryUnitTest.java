@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
 @Slf4j
@@ -45,7 +46,7 @@ class UserRepositoryUnitTest {
         User foundUser = userRepository.findByUsername("unknown_user");
 
         // Assertion
-        assertEquals(null, foundUser);
+        assertNull(foundUser);
         log.info("User not found for username: unknown_user");
     }
 }

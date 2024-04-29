@@ -5,7 +5,6 @@ import com.example.eLibrary.repository.LoanRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -20,9 +19,6 @@ import static org.mockito.Mockito.when;
 public class LoanRepositoryUnitTest {
     @Mock
     private LoanRepository loanRepository;
-
-    @InjectMocks
-    private LoanRepositoryUnitTest loanRepositoryUnitTest;
 
     @Test
     void testFindAllByUser_UsernameIgnoreCase() {

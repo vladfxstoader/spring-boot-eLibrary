@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,6 +43,6 @@ class CategoryRepositoryUnitTest {
         Category foundCategory = categoryRepository.findByNameIgnoreCase("NonExistentCategory");
 
         // Assertion
-        assertEquals(null, foundCategory);
+        assertNull(foundCategory);
     }
 }
