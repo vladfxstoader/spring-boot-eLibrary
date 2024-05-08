@@ -13,7 +13,6 @@ insert into author_details values(12, 'Anne Frank was a Jewish girl whose diary 
 insert into author_details values(13, 'Nora Roberts (born October 10, 1950, Silver Spring, Maryland, U.S.) American romance novelist who was one of the most successful and prolific authors of the genre.');
 insert into author_details values(14, 'Denis Diderot (born October 5, 1713, Langres, France—died July 31, 1784, Paris) was a French man of letters and philosopher who, from 1745 to 1772, served as chief editor of the Encyclopédie, one of the principal works of the Age of Enlightenment.');
 
-INSERT INTO author (id,first_name,last_name) VALUES (1,'Jules','Verne');
 INSERT INTO author (id,first_name,last_name) VALUES (3,'Ion','Creanga');
 INSERT INTO author (id,first_name,last_name) VALUES (4,'J.K.','Rowling');
 INSERT INTO author (id,first_name,last_name) VALUES (5,'Frank','Herbert');
@@ -28,21 +27,21 @@ INSERT INTO author (id,first_name,last_name) VALUES (13,'Frank','Miller');
 INSERT INTO author (id,first_name,last_name) VALUES (14,'Anne','Frank');
 INSERT INTO author (id,first_name,last_name) VALUES (15,'Nora','Roberts');
 INSERT INTO author (id,first_name,last_name) VALUES (16,'Denis','Diderot');
---
--- update author set author_details_id = 1 where id = 3;
--- update author set author_details_id = 2 where id = 4;
--- update author set author_details_id = 3 where id = 5;
--- update author set author_details_id = 4 where id = 6;
--- update author set author_details_id = 5 where id = 7;
--- update author set author_details_id = 6 where id = 8;
--- update author set author_details_id = 7 where id = 9;
--- update author set author_details_id = 8 where id = 10;
--- update author set author_details_id = 9 where id = 11;
--- update author set author_details_id = 10 where id = 12;
--- update author set author_details_id = 11 where id = 13;
--- update author set author_details_id = 12 where id = 14;
--- update author set author_details_id = 13 where id = 15;
--- update author set author_details_id = 14 where id = 16;
+
+ update author set author_details_id = 1 where id = 3;
+ update author set author_details_id = 2 where id = 4;
+ update author set author_details_id = 3 where id = 5;
+ update author set author_details_id = 4 where id = 6;
+ update author set author_details_id = 5 where id = 7;
+ update author set author_details_id = 6 where id = 8;
+ update author set author_details_id = 7 where id = 9;
+ update author set author_details_id = 8 where id = 10;
+ update author set author_details_id = 9 where id = 11;
+ update author set author_details_id = 10 where id = 12;
+ update author set author_details_id = 11 where id = 13;
+ update author set author_details_id = 12 where id = 14;
+ update author set author_details_id = 13 where id = 15;
+ update author set author_details_id = 14 where id = 16;
 
 INSERT INTO category (id,name) VALUES (2,'Fiction');
 INSERT INTO category (id,name) VALUES (3,'Thriller');
