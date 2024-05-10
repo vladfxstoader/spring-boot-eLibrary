@@ -4,12 +4,11 @@ eLibrary is a web-based library management system designed to facilitate the man
 
 ## 🚀 Features
 
-- **Secure Authentication**: Users can create accounts with hashed passwords, and credentials are transmitted securely using SSL. Account creation requires approval from administrators.
+- **Secure Authentication**: Users can create accounts with hashed passwords. Account creation requires approval from administrators.
 - **User Roles**: Administrators, librarians, and readers each have distinct roles with specific privileges.
-- **User Group Management**: Administrators can create, approve, reject, and assign users to different roles. They can also allocate interface viewing rights based on user groups.
+- **User Group Management**: Administrators can create, approve, reject, and assign users to different roles.
 - **Book Management**: Librarians can add, update, delete books, categories, and authors. They can also associate books with authors and categories.
 - **Loan Management**: Users can search for books, request loans, view loan history, and return books. Librarians can approve or reject loan requests.
-- **Reporting Module**: Includes various reports such as overdue loans, top borrowed books/authors/categories, and available books.
 - **Data Validation and Exception Handling**: Data validation is performed on both client and server sides to prevent data loss in case of request failures. Exceptions are handled appropriately.
 - **Logging**: Logs are utilized to track important operations applied to the database.
 - **Pagination and Sorting**: Options for pagination and sorting of data are available.
